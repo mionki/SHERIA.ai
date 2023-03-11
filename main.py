@@ -10,6 +10,8 @@ import warnings
 from gensim.models import Word2Vec
 from transformers import BertTokenizer, BertModel
 import numpy as np
+import faiss
+from typing import List
 warnings.filterwarnings("ignore", category=UserWarning)
 
 
@@ -38,12 +40,12 @@ def preprocess_text(text):
     return words
 
 # Loop through all files in the directory
-for filename in os.listdir('/home/piousmionki/new/supremecourt'):
+for filename in os.listdir('gs://sheria1/supremecourt/'):
 
     # Check if the file is a PDF
     if filename.endswith('.pdf'):
         # Open the PDF file
-        with open(os.path.join('/home/piousmionki/new/supremecourt', filename), 'rb') as f:
+        with open(os.path.join('gs://sheria1/supremecourt/', filename), 'rb') as f:
             #check if the file starts with !DOC
             try:
                 pdfReader = PyPDF2.PdfFileReader(f)
@@ -78,7 +80,7 @@ for filename in os.listdir('/home/piousmionki/new/supremecourt'):
     # Check if the file is a DOCX
     elif filename.endswith('.docx'):
         try:
-            doc = docx.Document(os.path.join('/home/piousmionki/new', filename))
+            doc = docx.Document(os.path.join('gs://sheria1/supremecourt/', filename))
         except docx.exceptions.PackageNotFoundError:
             warnings.warn(f"File {filename} is not a valid DOCX file")
             continue
@@ -143,8 +145,7 @@ document_data = pd.concat([document_data, labels_df], axis=1)
 # Train a Word2Vec model on the preprocessed documents
 model =Word2Vec(sentences=doc_text, window=10, min_count=2, workers=10, sg=20)
 
-import faiss  # or Annoy
-from typing import List
+
 
 # Load document embeddings
 document_embeddings = ...
